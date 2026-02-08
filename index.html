@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #ffeff6;
+            color: #5a3d5c;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(#ffcce0 2px, transparent 2px),
+                radial-gradient(#ffcce0 2px, transparent 2px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(159, 42, 112, 0.2);
+            overflow: hidden;
+            position: relative;
+            padding: 30px;
+            margin: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #ff7eb9;
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            color: #d43f7b;
+            margin-bottom: 10px;
+        }
+        
+        .italic-name {
+            font-style: italic;
+            font-size: 1.8rem;
+            color: #9f2a70;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .bold-red {
+            font-weight: bold;
+            color: #ff3366;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-container {
+            background-color: #fff9fc;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #ff7eb9;
+            box-shadow: inset 0 0 10px rgba(255, 126, 185, 0.1);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .message-container p {
+            margin-bottom: 15px;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .valentine-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .yes-btn {
+            background-color: #ff3366;
+            color: white;
+        }
+        
+        .yes-btn:hover {
+            background-color: #e62e5c;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.3);
+        }
+        
+        .no-btn {
+            background-color: #f0f0f0;
+            color: #555;
+        }
+        
+        .no-btn:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+        
+        /* Popup Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: popIn 0.5s ease;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-content h2 {
+            color: #ff3366;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: #ff3366;
+        }
+        
+        /* Celebration Screen */
+        .celebration-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ffeff6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .celebration-message {
+            font-size: 2.8rem;
+            color: #ff3366;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .heart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px 0;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ff3366;
+            transform: rotate(45deg);
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ff3366;
+            border-radius: 50%;
+        }
+        
+        .heart:before {
+            top: -50%;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -50%;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: rotate(45deg) scale(1); }
+            5% { transform: rotate(45deg) scale(1.1); }
+            10% { transform: rotate(45deg) scale(1); }
+            15% { transform: rotate(45deg) scale(1.2); }
+            20% { transform: rotate(45deg) scale(1); }
+            100% { transform: rotate(45deg) scale(1); }
+        }
+        
+        .countdown-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        
+        .countdown-title {
+            font-size: 1.3rem;
+            color: #9f2a70;
+            margin-bottom: 15px;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff3366;
+            background-color: #fff0f5;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            color: #7a5c7c;
+        }
+        
+        /* Falling petals */
+        .petal {
+            position: absolute;
+            top: -50px;
+            background-color: #ffb6d9;
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        .rose {
+            position: absolute;
+            font-size: 2rem;
+            color: #ff3366;
+            z-index: 5;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .bold-red {
+                font-size: 1.8rem;
+            }
+            
+            .italic-name {
+                font-size: 1.5rem;
+            }
+            
+            .celebration-message {
+                font-size: 2rem;
+            }
+            
+            .buttons-container {
+                gap: 20px;
+            }
+            
+            .valentine-btn {
+                padding: 12px 30px;
+                font-size: 1.2rem;
+            }
+            
+            .countdown-value {
+                width: 60px;
+                height: 60px;
+                font-size: 1.7rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .bold-red {
+                font-size: 1.5rem;
+            }
+            
+            .message-container {
+                padding: 20px;
+                font-size: 1rem;
+            }
+            
+            .celebration-message {
+                font-size: 1.6rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .valentine-btn {
+                width: 80%;
+            }
+            
+            .countdown {
+                gap: 10px;
+            }
+            
+            .countdown-value {
+                width: 50px;
+                height: 50px;
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const ValentineApp = () => {
+            const [showPopup, setShowPopup] = useState(false);
+            const [showCelebration, setShowCelebration] = useState(false);
+            const [petals, setPetals] = useState([]);
+            const [roses, setRoses] = useState([]);
+            const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+            // Calculate countdown from July 1, 2025
+            useEffect(() => {
+                const calculateCountdown = () => {
+                    const startDate = new Date('2025-07-01T00:00:00');
+                    const now = new Date();
+                    
+                    const diffTime = Math.abs(now - startDate);
+                    const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+                    
+                    setCountdown({ days, hours, minutes, seconds });
+                };
+                
+                calculateCountdown();
+                const interval = setInterval(calculateCountdown, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            // Create falling petals
+            useEffect(() => {
+                if (!showCelebration) return;
+                
+                const newPetals = [];
+                for (let i = 0; i < 50; i++) {
+                    newPetals.push({
+                        id: i,
+                        left: Math.random() * 100,
+                        size: Math.random() * 20 + 10,
+                        duration: Math.random() * 10 + 5,
+                        delay: Math.random() * 5
+                    });
+                }
+                setPetals(newPetals);
+                
+                // Create roses
+                const newRoses = [];
+                for (let i = 0; i < 15; i++) {
+                    newRoses.push({
+                        id: i,
+                        left: Math.random() * 100,
+                        top: Math.random() * 100,
+                        fontSize: Math.random() * 20 + 20
+                    });
+                }
+                setRoses(newRoses);
+            }, [showCelebration]);
+
+            const handleYesClick = () => {
+                setShowPopup(true);
+            };
+
+            const handleNoClick = () => {
+                // Move the no button randomly when hovered or clicked
+                const noButton = document.querySelector('.no-btn');
+                const container = document.querySelector('.container');
+                const containerRect = container.getBoundingClientRect();
+                
+                const maxX = containerRect.width - noButton.offsetWidth - 20;
+                const maxY = containerRect.height - noButton.offsetHeight - 20;
+                
+                const randomX = Math.floor(Math.random() * maxX);
+                const randomY = Math.floor(Math.random() * maxY);
+                
+                noButton.style.position = 'absolute';
+                noButton.style.left = `${randomX}px`;
+                noButton.style.top = `${randomY}px`;
+            };
+
+            const handleClosePopup = () => {
+                setShowPopup(false);
+                // After a short delay, show the celebration screen
+                setTimeout(() => {
+                    setShowCelebration(true);
+                }, 500);
+            };
+
+            // Main content
+            const mainContent = (
+                <div className="container">
+                    <div className="header">
+                        <h1><span className="italic-name">Hlangula Dlutu</span> <span className="bold-red">Will You Be My Valentine?</span></h1>
+                    </div>
+                    
+                    <div className="message-container">
+                        <p>Mholo mntwam, I'm sure you thought I forgot to ask you to be my Valentine's Date but I've seen how happy you've been lately, and that gave me an impression that I should do something nice for you and that will make me happy as well.</p>
+                        <p>Will you do me the honor of being my valentine and spend the rest of our lives together?</p>
+                    </div>
+                    
+                    <div className="buttons-container">
+                        <button className="valentine-btn yes-btn" onClick={handleYesClick}>Yes!</button>
+                        <button className="valentine-btn no-btn" onClick={handleNoClick} onMouseEnter={handleNoClick}>No</button>
+                    </div>
+                    
+                    <div className="countdown-container">
+                        <div className="countdown-title">Time since we started our journey:</div>
+                        <div className="countdown">
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.days}</div>
+                                <div className="countdown-label">Days</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.hours}</div>
+                                <div className="countdown-label">Hours</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.minutes}</div>
+                                <div className="countdown-label">Minutes</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.seconds}</div>
+                                <div className="countdown-label">Seconds</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Popup modal
+            const popupModal = showPopup && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="close-btn" onClick={handleClosePopup}>&times;</button>
+                        <h2>Yes! I will be your Valentine!</h2>
+                        <p>This makes me the happiest person in the world! ❤️</p>
+                        <button className="valentine-btn yes-btn" onClick={handleClosePopup} style={{marginTop: '20px'}}>
+                            Continue to Celebration
+                        </button>
+                    </div>
+                </div>
+            );
+
+            // Celebration screen
+            const celebrationScreen = showCelebration && (
+                <div className="celebration-screen">
+                    {/* Falling petals */}
+                    {petals.map(petal => (
+                        <div 
+                            key={petal.id}
+                            className="petal"
+                            style={{
+                                left: `${petal.left}%`,
+                                width: `${petal.size}px`,
+                                height: `${petal.size}px`,
+                                animationDuration: `${petal.duration}s`,
+                                animationDelay: `${petal.delay}s`
+                            }}
+                        ></div>
+                    ))}
+                    
+                    {/* Roses */}
+                    {roses.map(rose => (
+                        <div 
+                            key={rose.id}
+                            className="rose"
+                            style={{
+                                left: `${rose.left}%`,
+                                top: `${rose.top}%`,
+                                fontSize: `${rose.fontSize}px`
+                            }}
+                        >
+                            <i className="fas fa-heart"></i>
+                        </div>
+                    ))}
+                    
+                    <div className="celebration-message">YAAAAY! You're My Valentine!</div>
+                    
+                    <div className="heart-container">
+                        <div className="heart"></div>
+                    </div>
+                    
+                    <div className="countdown-container">
+                        <div className="countdown-title">Our beautiful journey started on July 1, 2025 and has lasted:</div>
+                        <div className="countdown">
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.days}</div>
+                                <div className="countdown-label">Days</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.hours}</div>
+                                <div className="countdown-label">Hours</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.minutes}</div>
+                                <div className="countdown-label">Minutes</div>
+                            </div>
+                            <div className="countdown-item">
+                                <div className="countdown-value">{countdown.seconds}</div>
+                                <div className="countdown-label">Seconds</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <>
+                    {!showCelebration && mainContent}
+                    {popupModal}
+                    {celebrationScreen}
+                </>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ValentineApp />);
+    </script>
+</body>
+</html>
